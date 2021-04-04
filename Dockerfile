@@ -1,15 +1,13 @@
-FROM python:3.8-slim
+FROM python:3.8-buster
 
 USER root
 
 
 WORKDIR /tmp
 
-RUN apt-get update && apt-get -y install git ant 
-RUN pip install -U pip && pip install acdh-tei-pyutils
+RUN apt-get update && apt-get -y install git ant && pip install -U pip && pip install acdh-tei-pyutils && apt-get clean
 
-RUN git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch.git /tmp/app && cd /tmp/app && git fetch --all && git pull origin master && git submodule update --init --recursive
-RUN git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch-data.git /tmp/schnitzler-tagebuch-data-public
+RUN git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch.git /tmp/app && cd /tmp/app && git fetch --all && git pull origin master && git submodule update --init --recursive && rm -rf /tmp/app/.git && git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch-data.git /tmp/schnitzler-tagebuch-data-public && rm -rf /tmp/schnitzler-tagebuch-data-public/.git && df -h
 
 RUN mentions-to-indices -t "erwähnt in " -i "/tmp/schnitzler-tagebuch-data-public/indices/*.xml" -f "/tmp/schnitzler-tagebuch-data-public/editions/*.xml"
 
