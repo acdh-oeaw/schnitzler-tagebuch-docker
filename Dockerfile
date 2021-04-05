@@ -5,13 +5,14 @@ USER root
 
 WORKDIR /tmp
 
-RUN apt-get update && apt-get -y install git ant && pip install -U pip && pip install acdh-tei-pyutils && apt-get clean
+RUN apt-get update && apt-get -y install git ant && pip install -U pip && pip install acdh-tei-pyutils
 
-RUN git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch.git /tmp/app && cd /tmp/app && git fetch --all && git pull origin master && git submodule update --init --recursive && rm -rf /tmp/app/.git && git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch-data.git /tmp/schnitzler-tagebuch-data-public
+RUN git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch.git /tmp/app && cd /tmp/app && git fetch --all && git pull origin master && git submodule update --init --recursive
+RUN git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch-data.git /tmp/schnitzler-tagebuch-data-public
 
-RUN mkdir /tmp/app/data && mv -f /tmp/schnitzler-tagebuch-data-public/* /tmp/app/data && rm -rf /tmp/schnitzler-tagebuch-data-public
+RUN mentions-to-indices -t "erwähnt in " -i "/tmp/schnitzler-tagebuch-data-public/indices/*.xml" -f "/tmp/schnitzler-tagebuch-data-public/editions/*.xml"
 
-RUN mentions-to-indices -t "erwähnt in " -i "/tmp/app/data/indices/*.xml" -f "/tmp/app/data/editions/*.xml"
+RUN tail -n 500 /tmp/schnitzler-tagebuch-data-public/indices/listperson.xml
 
 RUN ant -f /tmp/app/build.xml
 
