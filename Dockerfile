@@ -10,10 +10,11 @@ RUN apt-get update && apt-get -y install git ant && pip install -U pip && pip in
 RUN git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch.git /tmp/app && cd /tmp/app && git fetch --all && git pull origin master && git submodule update --init --recursive
 RUN git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch-data.git /tmp/schnitzler-tagebuch-data-public
 
-RUN mentions-to-indices -t "erwähnt in " -i "/tmp/schnitzler-tagebuch-data-public/indices/*.xml" -f "/tmp/schnitzler-tagebuch-data-public/editions/*.xml"
+RUN add-attributes -g "/tmp/schnitzler-tagebuch-data-public/editions/*.xml" -b "https://id.acdh.oeaw.ac.at/schnitzler/schnitzler-tagebuch/editions" \
+    && add-attributes -g "/tmp/schnitzler-tagebuch-data-public/indices/*.xml" -b "https://id.acdh.oeaw.ac.at/schnitzler/schnitzler-tagebuch/indices" \
+    && mentions-to-indices -t "erwähnt in " -i "/tmp/schnitzler-tagebuch-data-public/indices/*.xml" -f "/tmp/schnitzler-tagebuch-data-public/editions/*.xml"
 
-RUN tail -n 500 /tmp/schnitzler-tagebuch-data-public/indices/listperson.xml
-
+RUN find /tmp/app/modules/ -maxdepth 1 -type f -name "app.xql" -print0 | xargs -0 sed -i -e 's@http://127.0.1.1:8080/exist/apps/schnitzler-tagebuch@https://schnitzler-tagebuch.acdh.oeaw.ac.at@g'
 RUN ant -f /tmp/app/build.xml
 
 # START STAGE 2
