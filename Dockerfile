@@ -7,14 +7,14 @@ WORKDIR /tmp
 
 RUN apt-get update && apt-get -y install git ant && pip install -U pip && pip install acdh-tei-pyutils
 
-RUN git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch.git /tmp/app \
-    && cd /tmp/app && git fetch --all \
-    && git pull origin master && git submodule update --init --recursive
+RUN git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch.git /tmp/app && cd /tmp/app && git fetch --all && git pull origin master && git submodule update --init --recursive
 RUN git clone --depth=1 --branch master --single-branch https://github.com/acdh-oeaw/schnitzler-tagebuch-data.git /tmp/schnitzler-tagebuch-data-public
 
 RUN add-attributes -g "/tmp/schnitzler-tagebuch-data-public/editions/*.xml" -b "https://id.acdh.oeaw.ac.at/schnitzler/schnitzler-tagebuch/editions" \
     && add-attributes -g "/tmp/schnitzler-tagebuch-data-public/indices/*.xml" -b "https://id.acdh.oeaw.ac.at/schnitzler/schnitzler-tagebuch/indices"
-
+RUN mkdir /tmp/app/data && cp -rf /tmp/schnitzler-tagebuch-data-public/indices /tmp/app/data/shadowindices \
+    && mentions-to-indices -t "erwähnt in " -i "/tmp/app/data/shadowindices/*.xml" -f "/tmp/schnitzler-tagebuch-data-public/editions/*.xml"
+RUN find /tmp/app/modules/ -maxdepth 1 -type f -name "app.xql" -print0 | xargs -0 sed -i -e 's@http://127.0.1.1:8080/exist/apps/schnitzler-tagebuch@https://schnitzler-tagebuch.acdh.oeaw.ac.at@g'
 RUN ant -f /tmp/app/build.xml
 
 # START STAGE 2
