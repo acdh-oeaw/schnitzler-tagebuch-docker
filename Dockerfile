@@ -17,7 +17,6 @@ RUN add-attributes -g "/tmp/schnitzler-tagebuch-data-public/editions/*.xml" -b "
 RUN cd /tmp/schnitzler-tagebuch-data-public && schnitzler
 # RUN mkdir /tmp/app/data && cp -rf /tmp/schnitzler-tagebuch-data-public/indices /tmp/app/data/shadowindices \
 #     && mentions-to-indices -t "erwähnt in " -i "/tmp/app/data/shadowindices/*.xml" -f "/tmp/schnitzler-tagebuch-data-public/editions/*.xml"
-RUN find /tmp/app/modules/ -maxdepth 1 -type f -name "app.xql" -print0 | xargs -0 sed -i -e 's@http://127.0.1.1:8080/exist/apps/schnitzler-tagebuch@https://schnitzler-tagebuch.acdh.oeaw.ac.at@g'
 RUN ant -f /tmp/app/build.xml
 
 # START STAGE 2
