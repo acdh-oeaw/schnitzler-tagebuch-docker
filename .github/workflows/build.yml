@@ -1,4 +1,4 @@
-name: Build, Release
+name: Build, Release, Deploy
 on:
   push:
     branches:
@@ -15,3 +15,11 @@ jobs:
         run: |
           docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}" 
           docker push acdhch/schnitzler-tagebuch
+  rancher:
+     needs: push_to_registry
+     name: Deploy to rancher
+     runs-on: ubuntu-latest
+     steps:
+     - name: Rancher Deploy Action
+       run: |
+          curl -i -X POST "${{ secrets.RANCHERURL }}?action=redeploy" -H "Authorization: Bearer ${{ secrets.RANCHER_BARER_TOKEN }}"
