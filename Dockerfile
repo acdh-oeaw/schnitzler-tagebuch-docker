@@ -20,8 +20,7 @@ RUN cd /tmp/schnitzler-tagebuch-data-public && schnitzler
 RUN ant -f /tmp/app/build.xml
 
 # START STAGE 2
-FROM existdb/existdb:release
-ENV JAVA_OPTS="-Xms256m -Xmx2048m -XX:+UseConcMarkSweepGC -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -XX:GCTimeRatio=20"
+FROM acdhch/existdb:5.2.0-java11-ShenGC
 
 COPY --from=0 /tmp/app/build/*.xar /exist/autodeploy
 
