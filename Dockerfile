@@ -14,7 +14,7 @@ RUN git clone --depth=1 --branch master --single-branch https://github.com/acdh-
 RUN add-attributes -g "/tmp/schnitzler-tagebuch-data-public/editions/*.xml" -b "https://id.acdh.oeaw.ac.at/schnitzler/schnitzler-tagebuch/editions" \
     && add-attributes -g "/tmp/schnitzler-tagebuch-data-public/indices/list*.xml" -b "https://id.acdh.oeaw.ac.at/schnitzler/schnitzler-tagebuch/indices"
 
-RUN cd /tmp/schnitzler-tagebuch-data-public && schnitzler
+RUN cd /tmp/schnitzler-tagebuch-data-public
 # RUN mkdir /tmp/app/data && cp -rf /tmp/schnitzler-tagebuch-data-public/indices /tmp/app/data/shadowindices \
 #     && mentions-to-indices -t "erwähnt in " -i "/tmp/app/data/shadowindices/*.xml" -f "/tmp/schnitzler-tagebuch-data-public/editions/*.xml"
 RUN ant -f /tmp/app/build.xml
